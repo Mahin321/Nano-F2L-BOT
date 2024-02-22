@@ -5,6 +5,9 @@ from FileStream.utils.bot_utils import is_user_banned, is_user_exist, is_user_jo
 from FileStream.utils.database import Database
 from FileStream.utils.file_properties import get_file_ids, get_file_info
 from FileStream.config import Telegram
+from FileStteam.utils.human_readable import humanbytes
+from urllib.parse import quote_plus
+from pyrogram import idle
 from pyrogram import filters, Client
 from pyrogram.errors import FloodWait
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
@@ -72,15 +75,19 @@ async def channel_receive_handler(bot: Client, message: Message):
     await is_channel_exist(bot, message)
 
     try:
-        inserted_id = await db.add_file(get_file_info(message))
-        await get_file_ids(False, inserted_id, multi_clients, message)
-        reply_markup, stream_link = await gen_link(_id=inserted_id)
-        await bot.edit_message_reply_markup(
-            chat_id=message.chat.id,
-            message_id=message.id,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Dᴏᴡɴʟᴏᴀᴅ ʟɪɴᴋ 📥",
-                                       url=f"https://t.me/{FileStream.username}?start=stream_{str(inserted_id)}")]])
+        flog_msg = await m.forward(chat_id=config.FLOG_CHANNEL)
+        stream_link = f"{config.URL}watch/{str(flog_msg.id)}/{quote_plus(get_name(flog_msg))}?hash={get_hash(flog_msg)}"
+        online_link = f"{config.URL}{str(flog_msg.id)}/{quote_plus(get_name(flog_msg))}?hash={get_hash(flog_msg)}"
+       
+        msg_text ="""<i><u>𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗲𝗱 !</u></i>\n\n<b>📂 Fɪʟᴇ ɴᴀᴍᴇ :</b> <i>{}</i>\n\n<b>📦 Fɪʟᴇ ꜱɪᴢᴇ :</b> <i>{}</i>\n\n<b>📥 Dᴏᴡɴʟᴏᴀᴅ :</b> <i>{}</i>\n\n<b> 🖥WATCH  :</b> <i>{}</i>\n\n<b>🚸 Nᴏᴛᴇ : LINK WILL NOT EXPIRE UNTIL I DELETE</b>"""
+
+        await flog_msg.reply_text(text=f"**RᴇQᴜᴇꜱᴛᴇᴅ ʙʏ :** [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n**Uꜱᴇʀ ɪᴅ :** `{m.from_user.id}`\n**Stream ʟɪɴᴋ :** {stream_link}", disable_web_page_preview=True,  quote=True)
+        await m.reply_text(
+            text=msg_text.format(get_name(flog_msg), humanbytes(get_media_file_size(m)), online_link, stream_link),
+            quote=True,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("STREAM🖥", url=stream_link), #Stream Link
+                                                InlineKeyboardButton("DOWNLOAD📥", url=online_link)]]) #Download Link
         )
 
     except FloodWait as w:
