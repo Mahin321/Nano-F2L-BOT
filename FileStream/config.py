@@ -39,7 +39,7 @@ class Server:
     else:
         #URL = "https://{}/".format(FQDN)
         URL = FQDN 
-    )
+    
 
 
 
