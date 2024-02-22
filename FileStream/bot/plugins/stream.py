@@ -75,20 +75,20 @@ async def channel_receive_handler(bot: Client, message: Message):
     await is_channel_exist(bot, message)
 
     try:
-        flog_msg = await m.forward(chat_id=config.FLOG_CHANNEL)
-        stream_link = f"{config.URL}watch/{str(flog_msg.id)}/{quote_plus(get_name(flog_msg))}?hash={get_hash(flog_msg)}"
-        online_link = f"{config.URL}{str(flog_msg.id)}/{quote_plus(get_name(flog_msg))}?hash={get_hash(flog_msg)}"
+        log_msg = await m.forward(chat_id=config.FLOG_CHANNEL)
+        stream_link = f"{config.URL}watch/{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
+        online_link = f"{config.URL}{str(log_msg.id)}/{quote_plus(get_name(log_msg))}?hash={get_hash(log_msg)}"
        
         msg_text ="""<i><u>𝗬𝗼𝘂𝗿 𝗟𝗶𝗻𝗸 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗲𝗱 !</u></i>\n\n<b>📂 Fɪʟᴇ ɴᴀᴍᴇ :</b> <i>{}</i>\n\n<b>📦 Fɪʟᴇ ꜱɪᴢᴇ :</b> <i>{}</i>\n\n<b>📥 Dᴏᴡɴʟᴏᴀᴅ :</b> <i>{}</i>\n\n<b> 🖥WATCH  :</b> <i>{}</i>\n\n<b>🚸 Nᴏᴛᴇ : LINK WILL NOT EXPIRE UNTIL I DELETE</b>"""
 
-        await flog_msg.reply_text(text=f"**RᴇQᴜᴇꜱᴛᴇᴅ ʙʏ :** [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n**Uꜱᴇʀ ɪᴅ :** `{m.from_user.id}`\n**Stream ʟɪɴᴋ :** {stream_link}", disable_web_page_preview=True,  quote=True)
+        await log_msg.reply_text(text=f"**RᴇQᴜᴇꜱᴛᴇᴅ ʙʏ :** [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n**Uꜱᴇʀ ɪᴅ :** `{m.from_user.id}`\n**Stream ʟɪɴᴋ :** {stream_link}", disable_web_page_preview=True,  quote=True)
         await m.reply_text(
-            text=msg_text.format(get_name(flog_msg), humanbytes(get_media_file_size(m)), online_link, stream_link),
+            text=msg_text.format(get_name(log_msg), humanbytes(get_media_file_size(m)), online_link, stream_link),
             quote=True,
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("STREAM🖥", url=stream_link), #Stream Link
                                                 InlineKeyboardButton("DOWNLOAD📥", url=online_link)]]) #Download Link
-        
+        )
 
     except FloodWait as w:
         print(f"Sleeping for {str(w.x)}s")
