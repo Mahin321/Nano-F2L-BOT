@@ -88,7 +88,7 @@ async def channel_receive_handler(bot: Client, message: Message):
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("STREAM🖥", url=stream_link), #Stream Link
                                                 InlineKeyboardButton("DOWNLOAD📥", url=online_link)]]) #Download Link
-        )
+        
 
     except FloodWait as w:
         print(f"Sleeping for {str(w.x)}s")
